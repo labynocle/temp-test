@@ -4,7 +4,7 @@ on:
     branches:
       - main
 env:
-  AWS_REGION : "<example-aws-region>"
+  AWS_REGION : "us-east-1"
 permissions:
       id-token: write
       contents: read
