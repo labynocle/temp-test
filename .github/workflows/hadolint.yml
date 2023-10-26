@@ -1,0 +1,24 @@
+name: Hadolint
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+        - Dockerfile
+        - .hadolint.yml
+
+jobs:
+  hadolint:
+    name: Hadolint
+    runs-on: ubuntu-latest
+    container:
+      image: hadolint/hadolint:2.12.0-debian
+    steps:
+      # Fetch project source with GitHub Actions Checkout.
+      - uses: actions/checkout@v3
+
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          config: ./.hadolint.yml
