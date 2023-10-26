@@ -1,0 +1,5 @@
+---
+ignored:
+  - SC2028 # echo won't expand escape sequences. Consider printf.
+  - DL3008 # Pin versions in apt get install.
+
