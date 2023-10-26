@@ -13,28 +13,31 @@ RUN echo 'export PS1="🐳 \e[0;93m${CONTAINER_NAME}\e[0m \w # "' >> /etc/bash.b
 # Install system requirements
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        libsasl2-dev \
-        python3-dev \
-        libldap2-dev \
-        libssl-dev \
-        rsync
+        libsasl2-dev=2.1.28+dfsg-10 \
+        python3-dev=3.11.2-1+b1 \
+        libldap2-dev=2.5.13+dfsg-5 \
+        libssl-dev=3.0.9-1 \
+        rsync= \
+    && apt-get clean \
+    && apt-get autoremove \
+    && rm -rf /var/lib/apt/lists/*
 
 # Yq installation
 ARG YQ_VERSION=v4.35.1
-RUN wget -q https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 \
-        -O /usr/local/bin/yq \
+RUN curl https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 \
+        -o /usr/local/bin/yq \
     && chmod +x /usr/local/bin/yq
 
 # Jq installation
 ARG JQ_VERSION=1.6
-RUN wget -q https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64 \
-        -O /usr/local/bin/jq \
+RUN curl https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64 \
+        -o /usr/local/bin/jq \
     && chmod +x /usr/local/bin/jq
 
 # Terraform installation
 ARG TERRAFORM_VERSION=1.3.9
-RUN wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
-         -O /tmp/terraform.zip \
+RUN curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+         -o /tmp/terraform.zip \
     && unzip /tmp/terraform.zip -d /tmp/ \
     && mv /tmp/terraform /usr/local/bin/terraform \
     && chmod +x /usr/local/bin/terraform \
@@ -42,14 +45,14 @@ RUN wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraf
 
 # Terragrunt installation
 ARG TERRAGRUNT_VERSION=v0.35.3
-RUN wget -q https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 \
-        -O /usr/local/bin/terragrunt \
+RUN curl https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 \
+        -o /usr/local/bin/terragrunt \
     && chmod +x /usr/local/bin/terragrunt
 
 # AWS cli installation
 ARG AWS_CLI_VERSION=2.12.7
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${AWS_CLI_VERSION}.zip" \
-        -o "awscliv2.zip" \
+RUN curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${AWS_CLI_VERSION}.zip \
+        -o awscliv2.zip \
     && unzip awscliv2.zip \
     && ./aws/install \
     && rm -rf \
@@ -71,8 +74,8 @@ RUN echo "deb https://packages.cloud.google.com/apt cloud-sdk main" > /etc/apt/s
 ARG PYTHON_REQUIREMENTS_DOCKER_FILE=/tmp/requirements.txt
 ARG PYTHON_REQUIREMENTS_LOCAL_FILE=ansible/requirements.txt
 COPY ${PYTHON_REQUIREMENTS_LOCAL_FILE} ${PYTHON_REQUIREMENTS_DOCKER_FILE}
-RUN pip install --upgrade pip setuptools \
-    && pip install -r ${PYTHON_REQUIREMENTS_DOCKER_FILE} \
+RUN pip install --no-cache-dir --upgrade pip setuptools \
+    && pip install -no-cache-dir -r ${PYTHON_REQUIREMENTS_DOCKER_FILE} \
     && pip cache purge \
     && rm ${PYTHON_REQUIREMENTS_DOCKER_FILE}
 

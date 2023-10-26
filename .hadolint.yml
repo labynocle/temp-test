@@ -2,5 +2,5 @@
 
 ignored:
   - SC2028 # echo won't expand escape sequences. Consider printf.
-  - DL3008 # Pin versions in apt get install.
+  - DL4006 # Set the SHELL option -o pipefail before RUN with a pipe in it
 
