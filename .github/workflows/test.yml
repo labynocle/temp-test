@@ -1,0 +1,26 @@
+name: Validate terraform fmt
+on:
+  pull_request:
+    branches:
+      - main
+env:
+  AWS_REGION : "us-east-1"
+permissions:
+      id-token: write
+      contents: read
+
+jobs:
+  S3PackageUpload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v3
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::688073096776:role/com.botify.github.botify-report
+          role-session-name: samplerolesession
+          aws-region: ${{ env.AWS_REGION }}
+      - name:  test s3
+        run: |
+          aws s3 ls
