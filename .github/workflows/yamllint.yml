@@ -1,0 +1,26 @@
+---
+
+name: Yamllint
+on:
+  # Scan changed files in PRs and if there are changes
+  # on specific files
+  pull_request:
+    paths:
+      - '**.yaml'
+      - '**.yml'
+      - .yamllint.yml
+jobs:
+  Yamllint:
+    name: "Yamllint Check"
+    runs-on: ubuntu-latest
+    container:
+      image: pipelinecomponents/yamllint:amd64-0.32.1
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - name: Get yamllint version
+        run: yamllint --version
+      - name: Check all yaml files
+        run: yamllint -f colored .
